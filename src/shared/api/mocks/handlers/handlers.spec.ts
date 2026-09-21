@@ -8,6 +8,7 @@ import { issueToken } from './helpers';
 const BASE = 'http://localhost/api/v1';
 const server = setupServer(...handlers);
 const MULTIPART_BOUNDARY = 'vitest-multipart-boundary';
+const UPLOADED_COVER_DATA_URL = 'data:image/png;base64,iVBORw==';
 const CRLF = '\r\n';
 
 function authHeaders(): Record<string, string> {
@@ -166,6 +167,20 @@ describe('POST /books', () => {
     expect(get.data.title).toBe('Свежесозданная книга');
     expect(get.data.authors.map((a: { id: number }) => a.id)).toEqual([1, 2]);
   });
+
+  test('сохраняет загруженный файл обложки как cover_url', async () => {
+    const form = bookFormData({ title: 'Книга с обложкой' });
+    const res = await fetch(`${BASE}/books`, {
+      method: 'POST',
+      headers: { ...form.headers, ...authHeaders() },
+      body: form.body,
+    });
+    const body = await res.json();
+    expect(body.data.cover_url).toBe(UPLOADED_COVER_DATA_URL);
+
+    const get = await (await fetch(`${BASE}/books/${body.data.id}`)).json();
+    expect(get.data.cover_url).toBe(UPLOADED_COVER_DATA_URL);
+  });
 });
 
 describe('PUT/PATCH/DELETE /books/{id}', () => {
@@ -206,7 +221,9 @@ describe('PUT/PATCH/DELETE /books/{id}', () => {
       body: withCoverForm.body,
     });
     expect(withCover.status).toBe(200);
-    expect((await withCover.json()).data.title).toBe('Полностью обновлена');
+    const updated = (await withCover.json()).data;
+    expect(updated.title).toBe('Полностью обновлена');
+    expect(updated.cover_url).toBe(UPLOADED_COVER_DATA_URL);
   });
 
   test('DELETE — 204, книга исчезает; повтор — 404', async () => {

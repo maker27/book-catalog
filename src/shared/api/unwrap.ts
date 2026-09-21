@@ -42,13 +42,22 @@ export interface ApiResult<TPayload> {
   response: Response;
 }
 
+export interface ApiVoidResult {
+  error?: unknown;
+  response: Response;
+}
+
 export function unwrapResponse<TPayload>(result: ApiResult<TPayload>): TPayload {
-  if (result.error !== undefined || !result.response.ok) {
-    throw new ApiRequestError(result.response.status, extractApiErrors(result.error));
-  }
+  assertResponseOk(result);
   const payload = result.data?.data;
   if (payload === undefined) {
     throw new ApiRequestError(result.response.status, []);
   }
   return payload;
+}
+
+export function assertResponseOk(result: ApiVoidResult): void {
+  if (result.error !== undefined || !result.response.ok) {
+    throw new ApiRequestError(result.response.status, extractApiErrors(result.error));
+  }
 }

@@ -1,6 +1,14 @@
-import { ALLOWED_COVER_TYPES, MAX_COVER_SIZE_BYTES } from '@/shared/forms';
+import { ALLOWED_COVER_TYPES, MAX_COVER_SIZE_BYTES } from '@/shared/config';
+import { isValidIsbn } from '@/shared/lib';
 import { getMockDb, type MockDb } from '../db';
-import { errorResponse, http, parseIntParam, withMock, type ErrorItem } from './helpers';
+import {
+  errorResponse,
+  http,
+  parseIntParam,
+  readFileAsDataUrl,
+  withMock,
+  type ErrorItem,
+} from './helpers';
 
 interface ParsedBookForm {
   title: string;
@@ -29,13 +37,6 @@ async function parseBookForm(request: Request): Promise<ParsedBookForm> {
     author_ids: authorIds,
     cover: coverValue !== null && typeof coverValue !== 'string' ? coverValue : null,
   };
-}
-
-export function isValidIsbn(value: string): boolean {
-  if (!/^[0-9-]+$/.test(value)) return false;
-
-  const digits = value.replace(/-/g, '');
-  return digits.length === 10 || digits.length === 13;
 }
 
 function validateBookPayload(
@@ -116,13 +117,16 @@ export const bookHandlers = [
           return response(422).json({ success: false, errors });
         }
 
-        const book = db.createBook({
-          title: payload.title,
-          year: payload.year,
-          ...(payload.description !== undefined ? { description: payload.description } : {}),
-          ...(payload.isbn !== undefined ? { isbn: payload.isbn } : {}),
-          author_ids: payload.author_ids,
-        });
+        const book = db.createBook(
+          {
+            title: payload.title,
+            year: payload.year,
+            ...(payload.description !== undefined ? { description: payload.description } : {}),
+            ...(payload.isbn !== undefined ? { isbn: payload.isbn } : {}),
+            author_ids: payload.author_ids,
+          },
+          payload.cover ? await readFileAsDataUrl(payload.cover) : undefined,
+        );
         return response(201).json({ success: true, data: book });
       },
       { isAuthRequired: true },
@@ -163,13 +167,17 @@ export const bookHandlers = [
           return response(422).json({ success: false, errors });
         }
 
-        const book = db.replaceBook(id, {
-          title: payload.title,
-          year: payload.year,
-          ...(payload.description !== undefined ? { description: payload.description } : {}),
-          ...(payload.isbn !== undefined ? { isbn: payload.isbn } : {}),
-          author_ids: payload.author_ids,
-        });
+        const book = db.replaceBook(
+          id,
+          {
+            title: payload.title,
+            year: payload.year,
+            ...(payload.description !== undefined ? { description: payload.description } : {}),
+            ...(payload.isbn !== undefined ? { isbn: payload.isbn } : {}),
+            author_ids: payload.author_ids,
+          },
+          payload.cover ? await readFileAsDataUrl(payload.cover) : undefined,
+        );
         return response(200).json({ success: true, data: book });
       },
       { isAuthRequired: true },

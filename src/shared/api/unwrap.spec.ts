@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest';
+import { assert, describe, expect, test } from 'vitest';
 import { ApiRequestError, extractApiErrors, unwrapResponse, UNKNOWN_ERROR_MESSAGE } from './unwrap';
 
 function okResult<T>(payload: T) {
@@ -16,17 +16,17 @@ describe('unwrapResponse', () => {
       response: new Response('', { status: 422 }),
     };
 
+    let thrown: unknown;
     try {
       unwrapResponse(result);
-      expect.unreachable('должно было выбросить ошибку');
     } catch (error) {
-      expect(error).toBeInstanceOf(ApiRequestError);
-      if (error instanceof ApiRequestError) {
-        expect(error.status).toBe(422);
-        expect(error.errors).toEqual([{ field: 'isbn', message: 'Некорректный ISBN' }]);
-        expect(error.message).toBe('Некорректный ISBN');
-      }
+      thrown = error;
     }
+
+    assert(thrown instanceof ApiRequestError, 'должно было выбросить ApiRequestError');
+    expect(thrown.status).toBe(422);
+    expect(thrown.errors).toEqual([{ field: 'isbn', message: 'Некорректный ISBN' }]);
+    expect(thrown.message).toBe('Некорректный ISBN');
   });
 
   test('пустой ответ 200 без data — тоже ошибка', () => {

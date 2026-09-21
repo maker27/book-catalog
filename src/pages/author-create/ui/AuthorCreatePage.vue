@@ -3,10 +3,9 @@ import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 import { useApi } from '@/shared/api';
-import { useFormSubmit } from '@/shared/lib';
-import { AUTHOR_FIELDS, normalizeFullName, validateAuthorForm } from '@/shared/forms';
+import { normalizeFullName, useFormSubmit } from '@/shared/lib';
+import { AUTHOR_FIELDS, useAuthorsDirectory, validateAuthorForm } from '@/entities/author';
 import { BaseButton, BaseInput, FormPageLayout } from '@/shared/ui';
-import { useAuthorsDirectory } from '@/features/authors';
 
 const { api } = useApi();
 const router = useRouter();
@@ -36,7 +35,12 @@ async function handleFormSubmit() {
 </script>
 
 <template>
-  <FormPageLayout :form-error="formError" :is-busy="isSubmitting" title="Новый автор" @form-submit="handleFormSubmit">
+  <FormPageLayout
+    :form-error="formError"
+    :is-busy="isSubmitting"
+    title="Новый автор"
+    @form-submit="handleFormSubmit"
+  >
     <BaseInput
       v-model="fullName"
       :disabled="isSubmitting"

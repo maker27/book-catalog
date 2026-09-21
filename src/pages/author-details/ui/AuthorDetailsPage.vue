@@ -1,19 +1,21 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
+import { computed, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
-import { useAuthorsDirectory } from '@/features/authors';
+import { useAuthorsDirectory } from '@/entities/author';
 import { useSessionStore } from '@/features/auth';
-import { useNotFoundRedirect, useResource } from '@/shared/lib';
-import { unwrapResponse, useApi, type Author, type Book } from '@/shared/api';
+import { getApiMode, useDeleteAction, useNotFoundRedirect, useResource } from '@/shared/lib';
+import { assertResponseOk, unwrapResponse, useApi, type Author, type Book } from '@/shared/api';
 import { BaseButton, BaseSkeleton, ErrorRetry } from '@/shared/ui';
 import { BooksList } from '@/widgets/books-list';
+import SubscribeForm from './SubscribeForm.vue';
 
-const SKELETON_ROWS = 4;
 const AUTHOR_BOOKS_LIMIT = 100;
 const AUTHOR_BOOKS_SKELETON_COUNT = 3;
+const AUTHOR_SKELETON_ROWS = 4;
 
 const { api } = useApi();
+const { isSubscriptionsEnabled } = getApiMode();
 const route = useRoute();
 const router = useRouter();
 const session = useSessionStore();
@@ -54,21 +56,20 @@ function loadAuthorPage() {
 
 watch(authorId, loadAuthorPage, { immediate: true });
 
-const isDeleting = ref(false);
-
-async function handleDeleteClick() {
-  if (isDeleting.value || !window.confirm('Удалить автора? Действие необратимо.')) {
-    return;
-  }
-  isDeleting.value = true;
-  try {
-    await api.DELETE('/authors/{id}', { params: { path: { id: authorId.value } } });
+const {
+  confirmAndDelete: handleDeleteClick,
+  deleteError,
+  isDeleting,
+} = useDeleteAction({
+  confirmMessage: 'Удалить автора?',
+  remove: async () => {
+    assertResponseOk(
+      await api.DELETE('/authors/{id}', { params: { path: { id: authorId.value } } }),
+    );
     invalidateAuthorsDirectory();
     await router.push('/authors');
-  } finally {
-    isDeleting.value = false;
-  }
-}
+  },
+});
 </script>
 
 <template>
@@ -81,8 +82,8 @@ async function handleDeleteClick() {
     />
 
     <div v-else-if="isPending" class="author-page__skeleton">
-      <BaseSkeleton height="29px" width="50%" />
-      <BaseSkeleton v-for="row in SKELETON_ROWS" :key="row" height="20px" width="80%" />
+      <BaseSkeleton height="var(--line-height-headline-lg)" width="50%" />
+      <BaseSkeleton v-for="row in AUTHOR_SKELETON_ROWS" :key="row" height="20px" width="80%" />
     </div>
 
     <template v-else-if="author">
@@ -97,6 +98,10 @@ async function handleDeleteClick() {
           </BaseButton>
         </div>
       </div>
+
+      <p v-if="deleteError" class="author-page__delete-error" role="alert">
+        {{ deleteError }}
+      </p>
 
       <section class="author-page__books">
         <h2 class="author-page__subtitle">Книги автора</h2>
@@ -119,6 +124,8 @@ async function handleDeleteClick() {
           </template>
         </BooksList>
       </section>
+
+      <SubscribeForm v-if="isSubscriptionsEnabled" :author-id="authorId" />
 
       <BaseButton class="author-page__back" to="/authors" variant="secondary">
         Вернуться к списку авторов
@@ -157,6 +164,11 @@ async function handleDeleteClick() {
   display: flex;
   flex-wrap: wrap;
   gap: var(--spacing-sm);
+}
+
+.author-page__delete-error {
+  color: var(--color-error);
+  font-size: var(--font-size-body-sm);
 }
 
 .author-page__subtitle {

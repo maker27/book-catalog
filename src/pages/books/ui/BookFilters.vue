@@ -66,7 +66,7 @@ function handleResetClick() {
       v-model="search"
       :disabled="disabled"
       label="Поиск"
-      placeholder="Название или описание"
+      placeholder="Название, описание или ISBN"
     />
     <BaseSelect
       v-model="year"

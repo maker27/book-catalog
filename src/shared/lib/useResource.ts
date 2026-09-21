@@ -1,14 +1,14 @@
-import { ref, type Ref } from 'vue';
+import { ref, shallowRef, type Ref, type ShallowRef } from 'vue';
 
 export interface UseResourceReturn<T> {
-  data: Ref<T>;
+  data: ShallowRef<T>;
   error: Ref<unknown>;
   isPending: Ref<boolean>;
   reload: () => Promise<void>;
 }
 
 export function useResource<T>(loader: () => Promise<T>, initialValue: T): UseResourceReturn<T> {
-  const data = ref<T>(initialValue);
+  const data = shallowRef<T>(initialValue);
   const error = ref<unknown>(null);
   const isPending = ref(false);
 

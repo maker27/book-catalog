@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, useId } from 'vue';
+import { computed, type InputHTMLAttributes, nextTick, useId } from 'vue';
 
 const props = withDefaults(
   defineProps<{
@@ -8,7 +8,9 @@ const props = withDefaults(
     error?: string;
     hint?: string;
     id?: string;
+    inputmode?: InputHTMLAttributes['inputmode'];
     label?: string;
+    maxlength?: number;
     modelValue?: string | number | null;
     placeholder?: string;
     required?: boolean;
@@ -20,7 +22,9 @@ const props = withDefaults(
     error: '',
     hint: '',
     id: undefined,
+    inputmode: undefined,
     label: '',
+    maxlength: undefined,
     modelValue: '',
     placeholder: '',
     required: false,
@@ -35,10 +39,19 @@ const inputId = computed(() => props.id ?? generatedId);
 const errorId = computed(() => `${inputId.value}-error`);
 const hasError = computed(() => Boolean(props.error));
 
-function handleInput(event: Event) {
+async function handleInput(event: Event) {
   const target = event.target;
-  if (target instanceof HTMLInputElement) {
-    emit('update:modelValue', target.value);
+  if (!(target instanceof HTMLInputElement)) {
+    return;
+  }
+
+  emit('update:modelValue', target.value);
+  await nextTick();
+
+  // Keep the DOM in sync when the parent normalizes the emitted value back to the current one.
+  const normalizedValue = String(props.modelValue ?? '');
+  if (target.value !== normalizedValue) {
+    target.value = normalizedValue;
   }
 }
 </script>
@@ -57,6 +70,8 @@ function handleInput(event: Event) {
       class="base-input__control"
       :class="{ 'base-input__control_error': hasError }"
       :disabled="disabled"
+      :inputmode="inputmode"
+      :maxlength="maxlength"
       :placeholder="placeholder"
       :required="required"
       :type="type"

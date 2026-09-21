@@ -86,11 +86,13 @@ const router = createRouter({
 });
 
 router.beforeEach((to) => {
+  const session = useSessionStore();
+  session.checkSessionExpiration();
+
   if (!to.meta.requiresAuth) {
     return true;
   }
 
-  const session = useSessionStore();
   if (session.isAuthenticated) {
     return true;
   }

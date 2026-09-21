@@ -4,7 +4,7 @@ import type { AuthorShort } from '@/shared/api';
 import { handleCoverError } from '@/shared/lib';
 import BaseInput from '@/shared/ui/components/base/BaseInput.vue';
 import BaseTextarea from '@/shared/ui/components/base/BaseTextarea.vue';
-import type { BookFormErrors, BookFormState } from '@/shared/forms';
+import type { BookFormErrors, BookFormState } from '@/entities/book';
 
 const props = defineProps<{
   authors: AuthorShort[];

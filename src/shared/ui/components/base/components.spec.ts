@@ -50,6 +50,21 @@ describe('BaseButton', () => {
     expect(link.attributes('type')).toBeUndefined();
   });
 
+  test('to + disabled рендерит недоступную ссылку без навигации', async () => {
+    const wrapper = mount(BaseButton, {
+      props: { disabled: true, to: '/books/new' },
+      slots: { default: 'Добавить книгу' },
+    });
+    expect(wrapper.find('router-link-stub').exists()).toBe(false);
+    const link = wrapper.get('a');
+    expect(link.attributes('href')).toBeUndefined();
+    expect(link.attributes('aria-disabled')).toBe('true');
+    expect(link.attributes('tabindex')).toBe('-1');
+
+    await link.trigger('click');
+    expect(wrapper.emitted('click')).toBeUndefined();
+  });
+
   test('варианты secondary и link дают свои модификаторы', () => {
     expect(
       mount(BaseButton, { props: { variant: 'secondary' } })

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, watch } from 'vue';
+import { computed, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { BaseSelect, BaseSkeleton, ErrorRetry, type SelectOption } from '@/shared/ui';
 import { unwrapResponse, useApi, type TopAuthor } from '@/shared/api';
@@ -38,8 +38,7 @@ const {
   return payload.items ?? [];
 }, []);
 
-onMounted(loadTopAuthors);
-watch(currentYear, loadTopAuthors);
+watch(currentYear, loadTopAuthors, { immediate: true });
 
 function handleYearChange(year: string) {
   return router.push({ query: { year } });

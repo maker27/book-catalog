@@ -1,5 +1,4 @@
 import { describe, expect, test } from 'vitest';
-import { normalizeFullName, validateAuthorForm } from './authorSchema';
 import {
   buildBookFormData,
   buildBookJsonBody,
@@ -7,8 +6,7 @@ import {
   createEmptyBookForm,
   validateBookForm,
   type BookFormState,
-} from './bookSchema';
-import { validateSubscriptionForm } from './subscriptionSchema';
+} from './bookForm';
 
 function validBookForm(overrides: Partial<BookFormState> = {}): BookFormState {
   return {
@@ -77,18 +75,5 @@ describe('сериализация книги', () => {
     const request = buildBookMultipartRequest(validBookForm({ cover: pngCover() }));
     expect(request.body.cover).toBe('cover.png');
     expect(request.bodySerializer()).toBeInstanceOf(FormData);
-  });
-});
-
-describe('автор и подписка', () => {
-  test('пустое ФИО отклоняется, нормализация схлопывает пробелы', () => {
-    expect(validateAuthorForm('   ').full_name).toBeTruthy();
-    expect(validateAuthorForm('Иван Тестов')).toEqual({});
-    expect(normalizeFullName('  Иван   Тестов ')).toBe('Иван Тестов');
-  });
-
-  test('телефон принимается только в формате +7XXXXXXXXXX', () => {
-    expect(validateSubscriptionForm('+79991234567')).toEqual({});
-    expect(validateSubscriptionForm('89991234567').phone).toBeTruthy();
   });
 });

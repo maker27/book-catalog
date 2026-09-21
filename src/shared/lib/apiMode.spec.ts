@@ -9,6 +9,7 @@ describe('getApiMode', () => {
   test('включает мок-режим, когда URL backend не задан', () => {
     vi.stubEnv('VITE_API_BASE', '');
     vi.stubEnv('VITE_API_MODE', '');
+    vi.stubEnv('VITE_SUBSCRIPTIONS_ENABLED', '');
 
     const { isMock, isSubscriptionsEnabled } = getApiMode();
 
@@ -19,6 +20,7 @@ describe('getApiMode', () => {
   test('выключает мок-режим, когда URL backend задан', () => {
     vi.stubEnv('VITE_API_BASE', 'https://api.example.com');
     vi.stubEnv('VITE_API_MODE', '');
+    vi.stubEnv('VITE_SUBSCRIPTIONS_ENABLED', '');
 
     const { isMock, isSubscriptionsEnabled } = getApiMode();
 

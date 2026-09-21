@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 
-import { BookCard, CatalogSkeleton } from '@/features/catalog';
+import { BookCard } from '@/entities/book';
 import type { Book } from '@/shared/api';
+import CatalogSkeleton from './CatalogSkeleton.vue';
 
 const props = withDefaults(
   defineProps<{

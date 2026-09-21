@@ -1,23 +1,23 @@
 <script setup lang="ts">
-import { computed, onMounted, watch } from 'vue';
+import { computed, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
-import {
-  BookFilters,
-  DEFAULT_PAGE,
-  DEFAULT_PER_PAGE,
-  filtersToApiQuery,
-  filtersToRouteQuery,
-  parseBooksFilters,
-  type BooksFilters,
-} from '@/features/catalog';
-import { useAuthorsDirectory } from '@/features/authors';
+import { useAuthorsDirectory } from '@/entities/author';
 import { useSessionStore } from '@/features/auth';
 import { useResource } from '@/shared/lib';
 import { AppPagination, BaseButton, ErrorRetry } from '@/shared/ui';
 import { unwrapResponse, useApi, type Book, type Pagination } from '@/shared/api';
 import { buildYearOptions } from '@/shared/config';
 import { BooksList } from '@/widgets/books-list';
+import {
+  DEFAULT_PAGE,
+  DEFAULT_PER_PAGE,
+  filtersToApiQuery,
+  filtersToRouteQuery,
+  parseBooksFilters,
+  type BooksFilters,
+} from '../model/booksQuery';
+import BookFilters from './BookFilters.vue';
 
 interface BooksResult {
   books: Book[];
@@ -51,12 +51,8 @@ const books = computed(() => booksResult.value.books);
 const totalPages = computed(() => booksResult.value.pagination?.total_pages ?? 1);
 const isEmpty = computed(() => !isPending.value && !error.value && books.value.length === 0);
 
-onMounted(() => {
-  loadBooks();
-  loadAuthors();
-});
-
-watch(filters, loadBooks);
+loadAuthors();
+watch(filters, loadBooks, { immediate: true });
 
 function applyFilters(next: BooksFilters) {
   return router.push({ query: filtersToRouteQuery(next) });

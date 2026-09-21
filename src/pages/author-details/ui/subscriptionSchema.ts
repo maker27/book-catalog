@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
-export const PHONE_PATTERN = /^\+7\d{10}$/;
+import { PHONE_PATTERN } from '@/shared/lib';
+
 export const SUBSCRIPTION_FIELDS = ['author_id', 'phone'] as const;
 
 export type SubscriptionFormErrors = Partial<Record<(typeof SUBSCRIPTION_FIELDS)[number], string>>;

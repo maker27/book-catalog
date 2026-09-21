@@ -71,6 +71,16 @@ describe('MockDb', () => {
     expect(byIsbn.items).toHaveLength(1);
   });
 
+  test('listBooks ищет по описанию', () => {
+    const db = createMockDb();
+    const target = db.books[0];
+    if (!target) throw new Error('book fixture missing');
+    const descriptionFragment = target.description.slice(0, 10).toLowerCase();
+    if (!descriptionFragment) throw new Error('book fixture has no description');
+    const result = db.listBooks({ search: descriptionFragment });
+    expect(result.items.some((book) => book.id === target.id)).toBe(true);
+  });
+
   test('createBook / patchBook / deleteBook меняют состояние', () => {
     const db = createMockDb();
     const created = db.createBook({

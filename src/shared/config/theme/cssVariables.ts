@@ -1,4 +1,4 @@
-import { COLORS, FONT_FAMILY, RADIUS, ROUNDED, SPACING, TYPOGRAPHY } from './tokens';
+import { BUTTON, CARD, COLORS, FONT_FAMILY, RADIUS, ROUNDED, SPACING, TYPOGRAPHY } from './tokens';
 
 const GENERATED_HEADER =
   '/* Generated from src/shared/config/theme/tokens.ts by `pnpm generate:tokens`. Do not edit. */';
@@ -36,6 +36,8 @@ export function buildTokensCss(): string {
     buildGroup('rounded', ROUNDED),
     buildGroup('radius', mapRadius()),
     buildGroup('spacing', SPACING),
+    buildGroup('button', BUTTON),
+    buildGroup('card', CARD),
   ];
 
   return `${GENERATED_HEADER}\n:root {\n${groups.join('\n\n')}\n}\n`;

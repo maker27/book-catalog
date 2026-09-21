@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { computed, onMounted, watch } from 'vue';
+import { computed, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
-import { AuthorCard, AuthorsSkeleton } from '@/features/authors';
+import { AuthorCard, AuthorsSkeleton } from '@/entities/author';
 import { useSessionStore } from '@/features/auth';
 import { useResource } from '@/shared/lib';
 import { AppPagination, BaseButton, ErrorRetry } from '@/shared/ui';
@@ -44,8 +44,7 @@ const {
 const authors = computed(() => authorsResult.value.authors);
 const totalPages = computed(() => authorsResult.value.pagination?.total_pages ?? 1);
 
-onMounted(loadAuthors);
-watch(page, loadAuthors);
+watch(page, loadAuthors, { immediate: true });
 
 function handlePageUpdate(next: number) {
   router.push({ query: next === FIRST_PAGE ? {} : { page: String(next) } });

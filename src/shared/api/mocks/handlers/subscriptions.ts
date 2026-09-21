@@ -1,6 +1,6 @@
 import { createOpenApiHttp } from 'openapi-msw';
 import type { paths as LocalPaths } from '../../openapi/schema-local';
-import { PHONE_PATTERN } from '@/shared/forms';
+import { PHONE_PATTERN } from '@/shared/lib';
 import { getMockDb } from '../db';
 import { MOCK_BASE_URL, withMock } from './helpers';
 

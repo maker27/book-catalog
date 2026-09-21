@@ -49,9 +49,25 @@ function handleClick(event: MouseEvent) {
 </script>
 
 <template>
-  <RouterLink v-if="to" class="base-button" :class="modifierClasses" :to="to" @click="handleClick">
+  <RouterLink
+    v-if="to && !isDisabled"
+    class="base-button"
+    :class="modifierClasses"
+    :to="to"
+    @click="handleClick"
+  >
     <span class="base-button__label"><slot /></span>
   </RouterLink>
+  <a
+    v-else-if="to"
+    aria-disabled="true"
+    class="base-button base-button_disabled"
+    :class="modifierClasses"
+    tabindex="-1"
+    @click.prevent
+  >
+    <span class="base-button__label"><slot /></span>
+  </a>
   <button
     v-else
     :aria-busy="loading ? 'true' : 'false'"
@@ -75,27 +91,27 @@ function handleClick(event: MouseEvent) {
   border-radius: var(--radius-button);
   border-style: solid;
   border-width: 1px;
-  box-shadow: none;
   cursor: pointer;
   display: inline-flex;
   font-size: var(--font-size-label-lg);
   font-weight: 400;
   gap: var(--spacing-sm);
   justify-content: center;
-  min-height: 39px;
-  min-width: 242px;
-  padding: 12px 30px;
+  min-height: var(--button-min-height);
+  min-width: var(--button-min-width);
+  padding: var(--button-padding);
   text-decoration: none;
   transition: opacity 0.15s ease-in-out;
 
-  &:disabled {
-    cursor: not-allowed;
-    opacity: 0.6;
-  }
-
-  &:not(:disabled):hover {
+  &:not(:disabled):not(.base-button_disabled):hover {
     opacity: 0.85;
   }
+}
+
+.base-button:disabled,
+.base-button_disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
 }
 
 .base-button_primary {
@@ -132,7 +148,7 @@ function handleClick(event: MouseEvent) {
 
 .base-button_compact {
   min-width: 0;
-  padding: var(--spacing-sm) 20px;
+  padding: var(--button-compact-padding);
 }
 
 .base-button__spinner-slot {

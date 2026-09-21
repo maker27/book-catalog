@@ -340,7 +340,10 @@ export class MockDb {
     }
     if (search) {
       items = items.filter(
-        (b) => b.title.toLowerCase().includes(search) || b.isbn.toLowerCase().includes(search),
+        (b) =>
+          b.title.toLowerCase().includes(search) ||
+          b.description.toLowerCase().includes(search) ||
+          b.isbn.toLowerCase().includes(search),
       );
     }
     const { slice, pagination } = paginate(items, page, perPage);
@@ -352,7 +355,7 @@ export class MockDb {
     return record ? this.toBook(record) : undefined;
   }
 
-  createBook(input: BookWriteInput, cover: string = PLACEHOLDER_COVER_URL): Book {
+  createBook(input: BookWriteInput, cover: string | undefined = PLACEHOLDER_COVER_URL): Book {
     const record: BookRecord = {
       id: this.nextBookId++,
       title: input.title,

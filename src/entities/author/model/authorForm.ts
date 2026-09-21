@@ -20,7 +20,3 @@ export function validateAuthorForm(fullName: string): AuthorFormErrors {
   }
   return { full_name: result.error.issues[0]?.message };
 }
-
-export function normalizeFullName(fullName: string): string {
-  return fullName.trim().replace(/\s+/g, ' ');
-}

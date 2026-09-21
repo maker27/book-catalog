@@ -51,4 +51,11 @@
   --spacing-sm: 10px;
   --spacing-xl: 120px;
   --spacing-xs: 2px;
+
+  --button-compact-padding: 10px 20px;
+  --button-min-height: 39px;
+  --button-min-width: 242px;
+  --button-padding: 12px 30px;
+
+  --card-padding: 16px;
 }

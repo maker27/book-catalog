@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import BaseBusy from '@/shared/ui/components/base/BaseBusy.vue';
 import BaseButton from '@/shared/ui/components/base/BaseButton.vue';
 import BaseCard from '@/shared/ui/components/base/BaseCard.vue';
 import BaseInput from '@/shared/ui/components/base/BaseInput.vue';
 import { useApi } from '@/shared/api';
-import { useFormSubmit } from '@/shared/lib';
-import { SUBSCRIPTION_FIELDS, validateSubscriptionForm } from '@/shared/forms';
+import { formatPhoneInput, PHONE_MAX_LENGTH, useFormSubmit } from '@/shared/lib';
+import { SUBSCRIPTION_FIELDS, validateSubscriptionForm } from './subscriptionSchema';
 
 const props = defineProps<{ authorId: number }>();
 
@@ -17,6 +17,13 @@ const { applyApiErrors, fieldErrors, formError, isSubmitting, submit } = useForm
 
 const phone = ref('');
 const successMessage = ref('');
+
+const phoneInput = computed({
+  get: () => phone.value,
+  set: (value: string) => {
+    phone.value = formatPhoneInput(value);
+  },
+});
 
 async function handleFormSubmit() {
   successMessage.value = '';
@@ -44,12 +51,14 @@ async function handleFormSubmit() {
     <BaseBusy :busy="isSubmitting">
       <form class="subscribe-form__form" novalidate @submit.prevent="handleFormSubmit">
         <BaseInput
-          v-model="phone"
+          v-model="phoneInput"
           autocomplete="tel"
           :disabled="isSubmitting"
           :error="fieldErrors.phone"
           hint="Формат: +7XXXXXXXXXX"
+          inputmode="tel"
           label="Телефон"
+          :maxlength="PHONE_MAX_LENGTH"
           placeholder="+79991234567"
           required
           type="tel"

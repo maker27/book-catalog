@@ -1,12 +1,18 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue';
+import { computed, watch } from 'vue';
 import { RouterLink, useRoute, useRouter } from 'vue-router';
 
-import { BookDetailSkeleton } from '@/features/catalog';
 import { useSessionStore } from '@/features/auth';
-import { handleCoverError, PLACEHOLDER_COVER_URL, useNotFoundRedirect, useResource } from '@/shared/lib';
+import {
+  handleCoverError,
+  PLACEHOLDER_COVER_URL,
+  useDeleteAction,
+  useNotFoundRedirect,
+  useResource,
+} from '@/shared/lib';
 import { BaseButton, ErrorRetry } from '@/shared/ui';
-import { unwrapResponse, useApi, type Book } from '@/shared/api';
+import { assertResponseOk, unwrapResponse, useApi, type Book } from '@/shared/api';
+import BookDetailSkeleton from './BookDetailSkeleton.vue';
 
 const { api } = useApi();
 const route = useRoute();
@@ -27,23 +33,19 @@ const {
 
 useNotFoundRedirect(error);
 
-onMounted(loadBook);
-watch(bookId, loadBook);
+watch(bookId, loadBook, { immediate: true });
 
-const isDeleting = ref(false);
-
-async function handleDeleteClick() {
-  if (isDeleting.value || !window.confirm('Удалить книгу?')) {
-    return;
-  }
-  isDeleting.value = true;
-  try {
-    await api.DELETE('/books/{id}', { params: { path: { id: bookId.value } } });
+const {
+  confirmAndDelete: handleDeleteClick,
+  deleteError,
+  isDeleting,
+} = useDeleteAction({
+  confirmMessage: 'Удалить книгу?',
+  remove: async () => {
+    assertResponseOk(await api.DELETE('/books/{id}', { params: { path: { id: bookId.value } } }));
     await router.push('/books');
-  } finally {
-    isDeleting.value = false;
-  }
-}
+  },
+});
 </script>
 
 <template>
@@ -78,10 +80,13 @@ async function handleDeleteClick() {
           <BaseButton compact :to="`/books/${book.id}/edit`" variant="secondary">
             Редактировать
           </BaseButton>
-          <BaseButton compact :loading="isDeleting" variant="link" @click="handleDeleteClick">
+          <BaseButton compact :loading="isDeleting" variant="secondary" @click="handleDeleteClick">
             Удалить
           </BaseButton>
         </div>
+        <p v-if="deleteError" class="book-page__delete-error" role="alert">
+          {{ deleteError }}
+        </p>
       </div>
     </article>
   </div>
@@ -139,5 +144,10 @@ async function handleDeleteClick() {
 .book-page__actions {
   display: flex;
   gap: var(--spacing-sm);
+}
+
+.book-page__delete-error {
+  color: var(--color-error);
+  font-size: var(--font-size-body-sm);
 }
 </style>

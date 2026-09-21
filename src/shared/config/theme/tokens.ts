@@ -51,17 +51,12 @@ export const TYPOGRAPHY = {
 } as const;
 
 export const BUTTON = {
-  padding: '12px 30px',
-  borderRadius: ROUNDED.md,
-  minWidth: '242px',
+  compactPadding: `${SPACING.sm} 20px`,
   minHeight: '39px',
-  boxShadow: 'none',
+  minWidth: '242px',
+  padding: `12px ${SPACING.md}`,
 } as const;
 
 export const CARD = {
-  borderRadius: ROUNDED.sm,
-  borderWidth: '1px',
-  borderColor: COLORS.tertiary,
   padding: '16px',
-  boxShadow: 'none',
 } as const;

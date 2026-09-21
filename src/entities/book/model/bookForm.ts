@@ -1,11 +1,9 @@
 import { z } from 'zod';
-import { FIRST_CATALOG_YEAR } from '@/shared/config';
+import { ALLOWED_COVER_TYPES, FIRST_CATALOG_YEAR, MAX_COVER_SIZE_BYTES } from '@/shared/config';
+import { isValidIsbn } from '@/shared/lib';
 
 export const BOOK_TITLE_MAX_LENGTH = 255;
 export const BOOK_DESCRIPTION_MAX_LENGTH = 2000;
-export const BOOK_ISBN_PATTERN = /^[\d\-xX]{10,17}$/;
-export const MAX_COVER_SIZE_BYTES = 5 * 1024 * 1024;
-export const ALLOWED_COVER_TYPES = ['image/jpeg', 'image/png', 'image/webp'] as const;
 
 export const BOOK_FIELDS = ['title', 'year', 'description', 'isbn', 'author_ids', 'cover'] as const;
 
@@ -53,7 +51,7 @@ export const bookFormSchema = z.object({
   isbn: z
     .string()
     .trim()
-    .refine((value) => value === '' || BOOK_ISBN_PATTERN.test(value), 'Некорректный ISBN'),
+    .refine((value) => value === '' || isValidIsbn(value), 'Некорректный ISBN'),
   title: z
     .string()
     .trim()

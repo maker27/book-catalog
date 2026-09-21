@@ -13,8 +13,7 @@ withDefaults(defineProps<{ tag?: string }>(), { tag: 'div' });
   background-color: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-card);
-  box-shadow: none;
   color: var(--color-on-surface);
-  padding: 16px;
+  padding: var(--card-padding);
 }
 </style>

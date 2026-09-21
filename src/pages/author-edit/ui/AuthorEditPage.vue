@@ -2,10 +2,15 @@
 import { computed, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
-import { useAuthorsDirectory } from '@/features/authors';
-import { useFormSubmit, useNotFoundRedirect, useResource } from '@/shared/lib';
-import { ApiRequestError, NOT_FOUND_STATUS, unwrapResponse, useApi, type Author } from '@/shared/api';
-import { AUTHOR_FIELDS, normalizeFullName, validateAuthorForm } from '@/shared/forms';
+import { normalizeFullName, useFormSubmit, useNotFoundRedirect, useResource } from '@/shared/lib';
+import {
+  ApiRequestError,
+  NOT_FOUND_STATUS,
+  unwrapResponse,
+  useApi,
+  type Author,
+} from '@/shared/api';
+import { AUTHOR_FIELDS, useAuthorsDirectory, validateAuthorForm } from '@/entities/author';
 import { BaseButton, BaseInput, FormPageLayout } from '@/shared/ui';
 
 const { api } = useApi();

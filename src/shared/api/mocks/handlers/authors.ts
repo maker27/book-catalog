@@ -1,10 +1,6 @@
-import { normalizeFullName as normalizeFullNameValue } from '@/shared/forms';
+import { normalizeFullName } from '@/shared/lib';
 import { getMockDb } from '../db';
 import { errorResponse, http, parseIntParam, withMock } from './helpers';
-
-function normalizeFullName(value: unknown): string {
-  return normalizeFullNameValue(String(value ?? ''));
-}
 
 export const authorHandlers = [
   http.get(
@@ -25,7 +21,7 @@ export const authorHandlers = [
     withMock(
       async ({ request, response }) => {
         const body = await request.json();
-        const fullName = normalizeFullName(body.full_name);
+        const fullName = normalizeFullName(String(body.full_name ?? ''));
         if (!fullName) {
           return response(422).json({
             success: false,
@@ -62,11 +58,13 @@ export const authorHandlers = [
         const db = getMockDb();
         const id = Number(params.id);
         if (!db.authorExists(id)) {
-          return response.untyped(errorResponse(404, [{ field: 'id', message: 'Автор не найден' }]));
+          return response.untyped(
+            errorResponse(404, [{ field: 'id', message: 'Автор не найден' }]),
+          );
         }
 
         const body = await request.json();
-        const fullName = normalizeFullName(body.full_name);
+        const fullName = normalizeFullName(String(body.full_name ?? ''));
         if (!fullName) {
           return response(422).json({
             success: false,
@@ -87,7 +85,9 @@ export const authorHandlers = [
       ({ params, response }) => {
         const deleted = getMockDb().deleteAuthor(Number(params.id));
         if (!deleted) {
-          return response.untyped(errorResponse(404, [{ field: 'id', message: 'Автор не найден' }]));
+          return response.untyped(
+            errorResponse(404, [{ field: 'id', message: 'Автор не найден' }]),
+          );
         }
 
         return response(204).empty();

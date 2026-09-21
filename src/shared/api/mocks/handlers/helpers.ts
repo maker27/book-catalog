@@ -30,6 +30,17 @@ export function errorResponse(status: number, errors: ErrorItem[]): HttpResponse
   return HttpResponse.json(errorBody(errors), { status });
 }
 
+const DEFAULT_BINARY_MIME_TYPE = 'application/octet-stream';
+
+export async function readFileAsDataUrl(file: File): Promise<string> {
+  const bytes = new Uint8Array(await file.arrayBuffer());
+  let binary = '';
+  for (const byte of bytes) {
+    binary += String.fromCharCode(byte);
+  }
+  return `data:${file.type || DEFAULT_BINARY_MIME_TYPE};base64,${btoa(binary)}`;
+}
+
 export const MOCK_USER = { id: 1, username: 'admin', role: 'user' } as const;
 export const MOCK_PASSWORD = 'admin123';
 export const TOKEN_TTL_MS = 24 * 60 * 60 * 1000;

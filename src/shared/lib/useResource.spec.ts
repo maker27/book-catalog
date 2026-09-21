@@ -1,7 +1,23 @@
+import { nextTick, watch } from 'vue';
 import { describe, expect, test } from 'vitest';
 import { useResource } from './useResource';
 
 describe('useResource', () => {
+  test('замена всего значения data.value реактивна', async () => {
+    const { data, reload } = useResource<string>(() => Promise.resolve('loaded'), 'initial');
+
+    const seen: string[] = [];
+    watch(data, (value) => {
+      seen.push(value);
+    });
+
+    await reload();
+    await nextTick();
+
+    expect(data.value).toBe('loaded');
+    expect(seen).toEqual(['loaded']);
+  });
+
   test('поднимает isPending на время загрузки и записывает результат', async () => {
     const { data, isPending, reload } = useResource<string>(() => Promise.resolve('loaded'), '');
 

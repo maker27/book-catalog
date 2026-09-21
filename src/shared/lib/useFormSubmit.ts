@@ -33,7 +33,10 @@ export function useFormSubmit() {
     }
   }
 
-  function applyApiErrors(errors: ApiErrorItem[] | undefined, knownFields: readonly string[]): void {
+  function applyApiErrors(
+    errors: ApiErrorItem[] | undefined,
+    knownFields: readonly string[],
+  ): void {
     if (!errors || errors.length === 0) {
       formError.value = DEFAULT_REQUEST_ERROR;
       return;

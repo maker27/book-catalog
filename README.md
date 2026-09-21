@@ -42,8 +42,26 @@ VITE_API_MODE=real VITE_API_BASE=https://example.com/api/v1 pnpm dev
 
 ## Как устроено
 
-Раскладка по FSD: `app`, `pages`, `widgets`, `features`, `entities`, `shared`, плюс `ui` с дизайн-системой. Моки — в `mocks/`, e2e — в `e2e/`.
+Раскладка по FSD: `src/app`, `src/pages`, `src/widgets`, `src/features`, `src/entities`,
+`src/shared`.
 
-Типы и клиент генерируются из OpenAPI (`contracts/`), поэтому расхождение с контрактом видно на `pnpm type-check`. Эндпоинтов подписки в `book.yaml` нет — фича живёт на локально пропатченной копии `book.local.yaml` и закрыта флагом, предложение для владельца API лежит в `contracts/proposals/subscriptions.md`.
+- `entities` — доменные модели: форма и запросы книги (`entities/book/model`), справочник
+  и форма автора (`entities/author/model`), карточки `BookCard` и `AuthorCard`.
+- `features` — вход и сессия (`features/auth`), общая форма книги для создания
+  и редактирования (`features/book-form`).
+- `pages` — страницы-композиции; состояние фильтров каталога лежит рядом со страницей
+  в `pages/books/model`.
+- `widgets` — шапка, подвал, список книг.
+- `shared` — API-клиент и моки MSW (`src/shared/api`, моки в `src/shared/api/mocks`),
+  дизайн-система (`src/shared/ui`), токены (`src/shared/config/theme`), общие утилиты
+  и валидаторы (`src/shared/lib`).
 
-Фильтры каталога, номер страницы и год отчёта хранятся в URL, чтобы ссылку можно было переслать. Сессия — в localStorage. Стили на БЭМ + SCSS, цвета и отступы только через токены.
+Типы и клиент генерируются из OpenAPI. Основной контракт — `book.yaml` в корне репозитория.
+Эндпоинтов подписки в нём нет — фича живёт на локально пропатченной копии
+`src/shared/api/openapi/book.local.yaml` (черновик контракта, который со временем должен
+попасть в `book.yaml`, см. `src/shared/api/openapi/README.md`) и закрыта флагом
+`VITE_SUBSCRIPTIONS_ENABLED`. Расхождение сгенерированных типов с контрактом видно
+на `pnpm type-check`.
+
+Фильтры каталога, номер страницы и год отчёта хранятся в URL, чтобы ссылку можно было
+переслать. Сессия — в localStorage. Стили на БЭМ + SCSS, цвета и отступы только через токены.
