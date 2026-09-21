@@ -1,0 +1,7 @@
+allowBuilds:
+  '@parcel/watcher': true
+  msw: false
+peerDependencyRules:
+  allowedVersions:
+    openapi-typescript>typescript: "6"
+    tsconfck>typescript: "6"

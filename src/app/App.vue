@@ -1,11 +1,39 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { onBeforeMount } from 'vue';
+import { useSessionStore } from '@/features/auth';
+import { AppHeader } from '@/widgets/header';
+import { AppFooter } from '@/widgets/footer';
+
+const session = useSessionStore();
+
+onBeforeMount(() => {
+  session.checkSessionExpiration();
+});
+</script>
 
 <template>
-  <h1>You did it!</h1>
-  <p>
-    Visit <a href="https://vuejs.org/" target="_blank" rel="noopener">vuejs.org</a> to read the
-    documentation
-  </p>
+  <div class="app">
+    <AppHeader />
+    <main class="app__main page-container">
+      <router-view />
+    </main>
+    <AppFooter />
+  </div>
 </template>
 
-<style scoped></style>
+<style scoped lang="scss">
+.app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.app__main {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  padding-bottom: var(--spacing-lg);
+  padding-top: var(--spacing-md);
+}
+</style>

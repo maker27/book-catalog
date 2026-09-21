@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 400" width="300" height="400" role="img" aria-label="Обложка недоступна">
+  <rect width="300" height="400" fill="#f5f6f7"/>
+  <rect x="0.5" y="0.5" width="299" height="399" fill="none" stroke="#e5e7eb"/>
+  <g fill="none" stroke="#6b7280" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M90 150h50a20 20 0 0 1 20 20v100a20 20 0 0 0-20-20H90z"/>
+    <path d="M210 150h-50a20 20 0 0 0-20 20v100a20 20 0 0 1 20-20h50z"/>
+  </g>
+  <text x="150" y="320" fill="#6b7280" font-family="Geologica, Arial, sans-serif" font-size="18" text-anchor="middle">Обложка недоступна</text>
+</svg>

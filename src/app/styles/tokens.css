@@ -1,0 +1,54 @@
+/* Generated from src/shared/config/theme/tokens.ts by `pnpm generate:tokens`. Do not edit. */
+:root {
+  --color-accent: #0094ff;
+  --color-background: #ffffff;
+  --color-border: #e5e7eb;
+  --color-error: #d92d20;
+  --color-muted: #6b7280;
+  --color-neutral: #ffffff;
+  --color-on-surface: #333333;
+  --color-primary: #0094ff;
+  --color-secondary: #333333;
+  --color-surface: #ffffff;
+  --color-surface-muted: #f5f6f7;
+  --color-tertiary: #e5e7eb;
+
+  --font-family-base: "Geologica", Arial, Helvetica, sans-serif;
+
+  --font-size-body-lg: 18px;
+  --font-size-body-md: 16px;
+  --font-size-body-sm: 14px;
+  --font-size-headline-display: 48px;
+  --font-size-headline-lg: 24px;
+  --font-size-headline-md: 20px;
+  --font-size-label-lg: 16px;
+  --font-size-label-md: 14px;
+  --font-size-label-sm: 12px;
+
+  --line-height-body-lg: 1.5;
+  --line-height-body-md: normal;
+  --line-height-body-sm: 1.4;
+  --line-height-headline-display: 56px;
+  --line-height-headline-lg: 29px;
+  --line-height-headline-md: 24px;
+  --line-height-label-lg: normal;
+  --line-height-label-md: normal;
+  --line-height-label-sm: 1.2;
+
+  --rounded-full: 9999px;
+  --rounded-lg: 16px;
+  --rounded-md: 10px;
+  --rounded-none: 0px;
+  --rounded-sm: 8px;
+  --rounded-xl: 24px;
+
+  --radius-button: var(--rounded-md);
+  --radius-card: var(--rounded-sm);
+  --radius-full: var(--rounded-full);
+
+  --spacing-lg: 40px;
+  --spacing-md: 30px;
+  --spacing-sm: 10px;
+  --spacing-xl: 120px;
+  --spacing-xs: 2px;
+}

@@ -1,73 +1,49 @@
-# book-catalog
+# Каталог книг
 
-This template should help get you started developing with Vue 3 in Vite.
+SPA на Vue 3 + TypeScript + Vite: каталог книг и авторов, вход по паролю, отчёт ТОП-10
+авторов за год, подписка на новые книги автора.
 
-## Recommended IDE Setup
+Бэкенд не нужен — по умолчанию запросы перехватывает MSW, данные лежат в памяти.
 
-[VS Code](https://code.visualstudio.com/) + [Vue (Official)](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+## Запуск
 
-## Recommended Browser Setup
+Нужны Node 22+ и pnpm 11+ (`corepack enable`).
 
-- Chromium-based browsers (Chrome, Edge, Brave, etc.):
-  - [Vue.js devtools](https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd)
-  - [Turn on Custom Object Formatter in Chrome DevTools](http://bit.ly/object-formatters)
-- Firefox:
-  - [Vue.js devtools](https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/)
-  - [Turn on Custom Object Formatter in Firefox DevTools](https://fxdx.dev/firefox-devtools-custom-object-formatters/)
-
-## Type Support for `.vue` Imports in TS
-
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vite.dev/config/).
-
-## Project Setup
-
-```sh
+```bash
 pnpm install
-```
-
-### Compile and Hot-Reload for Development
-
-```sh
 pnpm dev
 ```
 
-### Type-Check, Compile and Minify for Production
+Откроется http://localhost:5173. Логин для демо — `admin` / `admin123`.
 
-```sh
-pnpm build
+Прод-сборка: `pnpm build`, посмотреть результат — `pnpm preview`.
+
+## Настройки
+
+Всё через `.env`, шаблон рядом — `.env.example`.
+
+- `VITE_API_MODE` — `mock` (по умолчанию) или `real`.
+- `VITE_API_BASE` — база реального API, по умолчанию `/api/v1`.
+- `VITE_MOCK_MODE` — `normal`, `slow` (задержки 1–2 с) или `with_errors` (30% ответов падают
+  с 500). Удобно для проверки лоадеров и ошибок.
+- `VITE_SUBSCRIPTIONS_ENABLED` — фиче-флаг подписок. Если пусто, включается только в моках.
+
+С реальным сервером:
+
+```bash
+VITE_API_MODE=real VITE_API_BASE=https://example.com/api/v1 pnpm dev
 ```
 
-### Run Unit Tests with [Vitest](https://vitest.dev/)
+## Команды
 
-```sh
-pnpm test:unit
-```
+`pnpm type-check`, `pnpm lint`, `pnpm format`, `pnpm test:unit`, `pnpm test:e2e`.
 
-### Run End-to-End Tests with [Playwright](https://playwright.dev)
+Перед первым e2e-прогоном: `pnpm exec playwright install chromium`.
 
-```sh
-# Install browsers for the first run
-npx playwright install
+## Как устроено
 
-# When testing on CI, must build the project first
-pnpm build
+Раскладка по FSD: `app`, `pages`, `widgets`, `features`, `entities`, `shared`, плюс `ui` с дизайн-системой. Моки — в `mocks/`, e2e — в `e2e/`.
 
-# Runs the end-to-end tests
-pnpm test:e2e
-# Runs the tests only on Chromium
-pnpm test:e2e --project=chromium
-# Runs the tests of a specific file
-pnpm test:e2e tests/example.spec.ts
-# Runs the tests in debug mode
-pnpm test:e2e --debug
-```
+Типы и клиент генерируются из OpenAPI (`contracts/`), поэтому расхождение с контрактом видно на `pnpm type-check`. Эндпоинтов подписки в `book.yaml` нет — фича живёт на локально пропатченной копии `book.local.yaml` и закрыта флагом, предложение для владельца API лежит в `contracts/proposals/subscriptions.md`.
 
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
-pnpm lint
-```
+Фильтры каталога, номер страницы и год отчёта хранятся в URL, чтобы ссылку можно было переслать. Сессия — в localStorage. Стили на БЭМ + SCSS, цвета и отступы только через токены.

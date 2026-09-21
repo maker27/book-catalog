@@ -1,0 +1,131 @@
+openapi: 3.0.3
+info:
+  title: Каталог книг — локальное расширение контракта
+  version: 1.0.0
+  description: |
+    Подписка гостя на новые книги автора. Эндпоинта нет в основном контракте `book.yaml`,
+    он описан здесь как предложение для бэкенда и реализован в мок-режиме (MSW).
+    В реальном режиме фича выключается флагом `VITE_SUBSCRIPTIONS_ENABLED`.
+
+servers:
+  - url: /api/v1
+
+paths:
+  /subscriptions:
+    post:
+      summary: Подписка гостя на новые книги автора
+      operationId: createSubscription
+      description: |
+        Публичный эндпоинт. Идемпотентен по паре (author_id, phone): первый вызов
+        возвращает 201, повтор той же пары — 200 с той же записью.
+      tags:
+        - Подписки
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubscriptionInput'
+      responses:
+        '201':
+          description: Подписка создана
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubscriptionResponse'
+        '200':
+          description: Подписка уже существовала (идемпотентный повтор)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubscriptionResponse'
+        '404':
+          description: Автор не найден
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '422':
+          description: Ошибки валидации
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /subscriptions/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+    delete:
+      summary: Отмена подписки
+      operationId: deleteSubscription
+      tags:
+        - Подписки
+      responses:
+        '204':
+          description: Подписка отменена
+        '404':
+          description: Подписка не найдена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  schemas:
+    SubscriptionInput:
+      type: object
+      required:
+        - author_id
+        - phone
+      properties:
+        author_id:
+          type: integer
+        phone:
+          type: string
+          description: Телефон в формате +7XXXXXXXXXX
+          example: '+79991234567'
+
+    Subscription:
+      type: object
+      properties:
+        id:
+          type: integer
+        author_id:
+          type: integer
+        phone:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+
+    SubscriptionResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          $ref: '#/components/schemas/Subscription'
+
+    Error:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorItem'
+
+    ErrorItem:
+      type: object
+      properties:
+        field:
+          type: string
+        message:
+          type: string
