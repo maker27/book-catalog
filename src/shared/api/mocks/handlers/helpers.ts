@@ -8,7 +8,7 @@ import { createOpenApiHttp } from 'openapi-msw';
 import type { paths } from '../../openapi/schema';
 import { withLatency } from '../latency';
 
-export const MOCK_BASE_URL = '*/api/v1';
+export const MOCK_BASE_URL = `*${import.meta.env.BASE_URL}api/v1`;
 
 export const http = createOpenApiHttp<paths>({ baseUrl: MOCK_BASE_URL });
 

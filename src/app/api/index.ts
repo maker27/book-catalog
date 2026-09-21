@@ -3,7 +3,7 @@ import type { App } from 'vue';
 import { API_INJECTION_KEY, createApiClient, type LocalPaths, type paths } from '@/shared/api';
 import { useSessionStore } from '@/features/auth';
 
-const DEFAULT_API_BASE = '/api/v1';
+const DEFAULT_API_BASE = `${import.meta.env.BASE_URL}api/v1`;
 const UNAUTHORIZED_STATUS = 401;
 
 export function provideApi(app: App) {

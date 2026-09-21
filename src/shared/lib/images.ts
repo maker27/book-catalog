@@ -1,5 +1,5 @@
-const COVERS_BASE_PATH = '/covers';
-const AUTHORS_BASE_PATH = '/authors';
+const COVERS_BASE_PATH = `${import.meta.env.BASE_URL}covers`;
+const AUTHORS_BASE_PATH = `${import.meta.env.BASE_URL}authors`;
 const PLACEHOLDER_FILE_NAME = 'placeholder.svg';
 
 export const PLACEHOLDER_COVER_URL = `${COVERS_BASE_PATH}/${PLACEHOLDER_FILE_NAME}`;
