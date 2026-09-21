@@ -1,3 +1,6 @@
+/**
+ * @vitest-environment node
+ */
 import { setupServer } from 'msw/node';
 import { afterAll, afterEach, beforeAll, describe, expect, test } from 'vitest';
 import { getMockDb, resetMockDb } from '../db';
